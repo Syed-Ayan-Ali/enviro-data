@@ -1,4 +1,4 @@
-urls=['https://bit.ly/3e4Sh0C','https://bit.ly/3yFAiFD'] #urls are temporary, will add better urls soon
+urls=['https://bit.ly/3e4Sh0C','https://bit.ly/3yFAiFD'] #urls are temporary, will add better urls soon/potentially a html file to avoid side menu
 global name
 
 
@@ -29,11 +29,9 @@ def image_annalyser():
     for i in  pixel_values:  #color has multiple values with small variance, add black color
         if i==(92, 200, 97, 255):
             green+=1
-    for i in  pixel_values:
-        if i==(238, 141, 72, 255):
+        elif i==(238, 141, 72, 255):
             orange+=1
-    for i in  pixel_values:
-        if i==(226, 56, 46, 255):
+        elif i==(226, 56, 46, 255):
             red+=1      
     return green,red,orange
 
@@ -41,7 +39,7 @@ def image_annalyser():
 
 def emmisions_calculations(g,o,r):
     emmisions=(g*1+o*2+r*3)/5000 * .5 # replace 5000 with acurate number for scale and give each color accurate waitage, formula not final
-    print(str(emmisions) + "Emmisons")
+    #print(str(emmisions))
     return emmisions
 
 
@@ -49,19 +47,20 @@ def emmisions_calculations(g,o,r):
 def clean_up(data):
     import os
     os.remove(name)
-    print("File Removed!")
+    #print("File Removed!")
     f=open('data', "a+")
-    f.write(str(data) + '\n')
+    f.write(str(data) +' Kg/hour\n')
     f.close() 
-    pass #delete zscreenhot and send txt file to website
+    #send txt file to website
 
 
 
+def process():
+    j=0
+    for i in urls:
+        screenshot(i,j)
+        j+=1
+        green,orange,red=image_annalyser()
+        clean_up(emmisions_calculations(green,orange,red))
 
-j=0
-for i in urls:
-    screenshot(i,j)
-    j+=1
-    green,orange,red=image_annalyser()
-    clean_up(emmisions_calculations(green,orange,red))
-
+process()
