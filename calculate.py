@@ -40,27 +40,77 @@ def image_annalyser():
 def emmisions_calculations(g,o,r):
     emmisions=(g*1+o*2+r*3)/5000 * .5 # replace 5000 with acurate number for scale and give each color accurate waitage, formula not final
     #print(str(emmisions))
-    return emmisions
+    return str(emmisions)
 
 
 
 def clean_up(data):
     import os
+    starting_html='''
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+        <title>CSS Website</title>
+        <link rel="stylesheet" href="Website.css">
+    </head>
+    <body>
+        <header id="main-header">
+            <div class="main-container">
+                <h1>
+                    CO<sub>2</sub> Emissions in Islamabad
+                </h1>
+            </div>
+        </header>
+
+        <nav id="navbar">
+            <div class="container">
+                <ul>
+                    <li><a href="" > Home</a></li>
+                    <li><a href="" > About</a></li>
+                    <li><a href="" > The Team</a></li>
+                    <li><a href="" > Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container">
+            <section id="image-showcase">
+                <div class="container">
+                </div>
+            </section>
+
+            <aside id="showcase">
+                <div class="container">
+
+
+
+    '''
+    ending= '''     
+            </div>
+            </aside>
+        </div>
+        
+       <footer id="main-footer">
+           <p>Copyright &copy;2021 FORI Interns</p>
+       </footer>
+     
+    </body></html>
+'''
+
     os.remove(name)
     #print("File Removed!")
-    f=open('data.txt', "a")
-    f.write(str(data) +' Kg/hour\n')
+    f=open('Website\data.html', "w")
+    f.write(starting_html +data +ending)
     f.close() 
     #send txt file to website
 
+global data
 
 
 def process():
     j=0
+    data=''
     for i in urls:
         screenshot(i,j)
         j+=1
         green,orange,red=image_annalyser()
-        clean_up(emmisions_calculations(green,orange,red))
-
+        data=data +'<h4>' +  emmisions_calculations(green,orange,red) + '</h4>' +'\n'
+    clean_up(data)
 process()
