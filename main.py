@@ -1,20 +1,23 @@
+from numpy.core.fromnumeric import product
+
+
 Sectors=['E-11','E-9', 'E-8', 'E-7',
 'F-5','F-6','F-7','F-8','F-10','F-11',
 'G-5','G-6','G-7', 'G-8', 'G-9', 'G-10', 'G-11','G-13', 'G-14',
 'H-8','H-9','H-10','H-11', 'H-12',
 'I-8','I-9','I-10','I-11' ]
 
+subsectors=[4,6,9,5,4]
+sector_emmisions=[]
+main_sectors = ['E','F','G','H','I']
+startc=[0,4,10,19,24]
+endc=[4,10,19,24,28]
+
 subsectors=[1,6,9,5,4]
 sector_emmisions=[]
 main_sectors = ['E','F','G','H','I']
-startc=[1,7,16,21]
-endc=[6,15,21,26]
 
-subsectors=[1,6,9,5,4]
-sector_emmisions=[]
-main_sectors = ['E','F','G','H','I']
-
-
+print(Sectors[24:28])
 global name
 
 global data
@@ -187,14 +190,13 @@ def pie_chart(emmisions):
     plt.legend(title = "Sectors:",bbox_to_anchor=(1.15,1))
     plt.savefig('D:\enviro-data-main\Website\images\ ' +'all.png')
     
-    for i in range(0,4):
+    for i in range(0,5):
         import matplotlib.pyplot as plt
         import numpy as np
         plt.figure(i)
         y = np.array(emmisions[startc[i]:endc[i]])
         plt.pie(y, labels =Sectors[startc[i]:endc[i]])
-        j=i+1
-        plt.savefig('D:\enviro-data-main\Website\images\ ' +main_sectors[1+i] +'.png')
+        plt.savefig('D:\enviro-data-main\Website\images\ ' +main_sectors[i] +'.png')
 
 
 
