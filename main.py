@@ -1,23 +1,10 @@
 from numpy.core.fromnumeric import product
-
-
-Sectors=['E-11','E-9', 'E-8', 'E-7',
+Sectors=[ 'E-11','E-9', 'E-8', 'E-7',
 'F-5','F-6','F-7','F-8','F-10','F-11',
 'G-5','G-6','G-7', 'G-8', 'G-9', 'G-10', 'G-11','G-13', 'G-14',
 'H-8','H-9','H-10','H-11', 'H-12',
 'I-8','I-9','I-10','I-11' ]
 
-subsectors=[4,6,9,5,4]
-sector_emmisions=[]
-main_sectors = ['E','F','G','H','I']
-startc=[0,4,10,19,24]
-endc=[4,10,19,24,28]
-
-subsectors=[1,6,9,5,4]
-sector_emmisions=[]
-main_sectors = ['E','F','G','H','I']
-
-print(Sectors[24:28])
 global name
 
 global data
@@ -62,7 +49,6 @@ def screenshot(sector, d):
     print("end...")
    
 
-
 def image_annalyser(sctr): 
     green,orange,red,black=0,0,0,0
     from PIL import Image
@@ -87,15 +73,9 @@ def image_annalyser(sctr):
 
     return green,red,orange,black
 
-
-
 def emmisions_calculations(g,o,r,b):
-    formula= (555/700) / 6
-
-    emmisions=((g*formula*0.3)+(o*formula*0.5)+(r*formula*0.8)+(b*formula*0.96))*0.525
-    if name[-5]=='5':
-        emmisions/=2
-    #print(str(emmisions))
+    formula= (555/700) / 5
+    emmisions=((g*formula*0.4)+(o*formula*0.6)+(r*formula*0.8)+(b*formula*0.96))*0.525
     emmisions=int(emmisions)
     return str(emmisions)
 
@@ -114,9 +94,12 @@ def clean_up(sctr):
 def send_to_website(data):
     
     starting_html='''
-    <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-        <title>CSS Website</title>
-        <link rel="stylesheet" href="Website.css">
+     <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+            <meta name = "viewport" content="width=device-width, initial-scale=1">
+            <title>CSS Website</title>
+            <link rel="stylesheet" href="Website.css">
     </head>
     <body>
         <header id="main-header">
@@ -133,27 +116,43 @@ def send_to_website(data):
                     <li><a href="" > Home</a></li>
                     <li><a href="" > About</a></li>
                     <li><a href="" > The Team</a></li>
-                    <li><a href="" > Contact</a></li>
+                
                 </ul>
             </div>
         </nav>
         <div class="container">
             <section id="image-showcase">
-                <div class="container">
+                
+                <div class="chart-container">
+                    
+                    <img src="images/ all.png" id='chart-showcase'>
+                    <img src="images/ E.png" id='chart-showcase'>
+                    <img src="images/ F.png"id='chart-showcase'>
+                    <img src="images/ G.png" id='chart-showcase'>
+                    <img src="images/ H.png" id='chart-showcase'>
+                    <img src="images/ I.png"id='chart-showcase'>
+           
                 </div>
+                <!-- <div class="container">
+                </div> -->
             </section>
-
-            <aside id="showcase">
-                <div class="container">
+            <!-- <section id = "chart-showcase"> -->
+            
+            <aside id="text-showcase">
+                <div class="container"></div>
                 <table>    
                         <th>
-                            Sector | Emissions
+                            Sector Emissions per Hour
                         </th>
     '''
     ending_html= '''   
-                    </table>  
+                   </table>  
                 </div>
+                <!-- <section class="chart-container">     -->
+                
+       <!-- </section> -->
             </aside>
+            
         </div>
         
        <footer id="main-footer">
@@ -161,18 +160,22 @@ def send_to_website(data):
        </footer>
     </body></html>
     '''
-
     
     f = open('D:\enviro-data-main\Website\data.html', "w")
     f.write(starting_html + data + ending_html)
     f.close() 
     #send txt file to website
 
-
+subsectors=[4,6,9,5,4]
+sector_emmisions=[]
+main_sectors = ['E','F','G','H','I']
+startc=[0,4,10,19,24]
+endc=[4,10,19,24,28]
 
 def pie_chart(emmisions):
     import matplotlib.pyplot as plt
     import numpy as np
+    import matplotlib as mpl
     end=False
     i=0
     while end==False: 
@@ -184,21 +187,19 @@ def pie_chart(emmisions):
         if i==5:
             end=True
 
-
+    mpl.rcParams['font.size'] = 16
     plt.figure(5)
+    plt.title('Emmisons per Sectors')
     plt.pie(np.array(sector_emmisions), labels = main_sectors)
-    plt.legend(title = "Sectors:",bbox_to_anchor=(1.15,1))
+    plt.legend(title = "Sectors:",bbox_to_anchor=(1,1))
     plt.savefig('D:\enviro-data-main\Website\images\ ' +'all.png')
-    
     for i in range(0,5):
-        import matplotlib.pyplot as plt
-        import numpy as np
         plt.figure(i)
+        mpl.rcParams['font.size'] = 18
+        plt.title(main_sectors[i] + ' - Sectors')
         y = np.array(emmisions[startc[i]:endc[i]])
         plt.pie(y, labels =Sectors[startc[i]:endc[i]])
         plt.savefig('D:\enviro-data-main\Website\images\ ' +main_sectors[i] +'.png')
-
-
 
 def process():
     data=''
@@ -225,18 +226,10 @@ def process():
         screenshot(sector, driver)
         green,orange,red,black= image_annalyser(sector)
         emission_for_sector = emmisions_calculations(green,orange,red,black)
-        
-        # colours = ["#95B121", "#AEB91A", "#C6C013","#E3B61C", "#EFB420", "#FAB123", "#FAAA15", "#FAA322",
-        #             "#FAA307", "#F48C06", "#F18106","#EB6905", "#E85D04", "#E55204", "#E24603","#DA3B03",
-        #             "#D22F03", "#C52A05","#9E1A09","#960E08","#8D0207","#850309","#7C030B","#73040D", "#6A040F"]
-        colours = ["#7CA928", "#95B121", "#AEB91A", "#C6C013", "#E3B61C", "#EFB420", "#FAB123", "#FAAA15", "#FAA322",
-                    "#FAA307", "#F79807", "#F48C06", "#F18106","#EE7505", "#E85D04", "#E55204", "#E24603","#DA3B03",
-                    "#D22F03", "#C52A05", "#B82506","#9E1A09","#960E08","#8D0207","#850309","#7C030B","#73040D", "#6A040F"]
-        # #colours = ["#7CA928", "#95B121", "#AEB91A", "#C6C013", "#E3B61C", "#EFB420", "#FAB123", "#FAAA15", "#FAA322",
-        #             "#FAA307", "#F79807", "#F48C06", "#F18106","#EE7505","#EB6905", "#E85D04", "#E55204", "#E24603","#DA3B03",
-        #             "#D22F03", "#C52A05", "#B82506","#9E1A09","#960E08","#8D0207","#850309","#7C030B","#73040D", "#6A040F"]
-        # #Emissions = [23, 24, 29, 29]
 
+        colours = ["#7CA928", "#95B121", "#AEB91A", "#C6C013", "#E3B61C", "#EFB420", "#FAB123", "#FAAA15", "#FAA322",
+                    "#FAA307", "#F79807", "#F48C06", "#F18106","#EE7505","#EB6905", "#E85D04", "#E55204", "#E24603","#DA3B03",
+                    "#D22F03", "#C52A05", "#B82506","#9E1A09","#960E08","#8D0207","#7C030B","#73040D", "#6A040F"]
         Emissions.append(emission_for_sector)
        
        
@@ -253,38 +246,38 @@ def process():
                 if Emissions[j] == comparable:
                     Emissions[j] += 1
     print("Emissions after check: " + str(Emissions))
-    no_more_swaps = False
+    
     unsorted_emissions = Emissions
-                     #E-11,E-9,E-8,E-7,F-5,F-6,F-7,F-8,F-10,F-11, G-5,G-6,G-7,G-8,G-9 G-10,G-11,G-13,G-14, H-8,H-9,H-10,H-11,H-12, I-8,I-9,I-10,I-11
-    start_x_pixels = [290,515, 590,680,865,767,670,575, 378, 288  ,865,767,670,575,472,378, 288,88,   0  , 575,472, 378, 284, 187, 575,472, 378, 285] 
-    end_x_pixels =   [370,570, 665,715,910,855,758,663, 465, 370  ,910,855,758,663,565,465, 370,175,  80 , 663,565, 465, 371, 275, 663,565, 465, 371]
-    start_y_pixels = [95, 123, 150,170,190,190,190,190, 190, 190  ,285,285,285,285,285,285, 285,285,  285, 375,375, 375, 375, 375, 480,480, 480, 480]
-    end_y_pixels =   [180,160, 182,180,275,275,275,275, 275, 275  ,365,365,365,365,365,365, 365,365,  365, 471,468, 468, 468, 468, 565,565, 565, 565]
+                     #E-11,E-9, E-8,E-7,F-5,F-6,F-7,F-8,F-10,F-11,  G-5,G-6,G-7,G-8,G-9 G-10,G-11,G-13,G-14, H-8,H-9,H-10,H-11,H-12, I-8,I-9,I-10,I-11
+    start_x_pixels = [290, 515, 590,680,865,767,670,575, 378, 288  ,865,767,670,575,472,378, 288,88,   4  , 575,472, 378, 284, 187, 575,472, 378, 285] 
+    end_x_pixels =   [370, 570, 665,715,910,855,758,663, 465, 370  ,910,855,758,663,565,465, 370,175,  83 , 663,565, 465, 371, 275, 663,565, 465, 371]
+    start_y_pixels = [95,  123, 150,170,190,190,190,190, 190, 190  ,285,285,285,285,285,285, 285,285,  285, 375,375, 375, 375, 375, 480,480, 480, 480]
+    end_y_pixels =   [180, 160, 182,180,275,275,275,275, 275, 275  ,365,365,365,365,365,365, 365,365,  365, 471,468, 468, 468, 468, 565,565, 565, 565]
   
     sorted_x_start_array = [' ' for i in range(len(start_x_pixels))]
     sorted_x_end_array = [' ' for i in range(len(end_x_pixels))]
     sorted_y_start_array = [' ' for i in range(len(start_y_pixels))]
     sorted_y_end_array = [' ' for i in range(len(end_y_pixels))]
 
-    n = len(Emissions) - 1
-   
-    print("unsorted emissions are: " + str(unsorted_emissions))
-    while no_more_swaps == False:
-        no_more_swaps = True
-        for j in range(0, n):
-            if Emissions[j] > Emissions[j+1]:
-                Temp = Emissions[j]
-                Emissions[j] = Emissions[j + 1]
-                Emissions[j + 1] = Temp 
-                no_more_swaps = False
-        n -= 1  
+    #n = len(Emissions) - 1
+    # no_more_swaps = False
+    # print("unsorted emissions are: " + str(unsorted_emissions))
+    # while no_more_swaps == False:
+    #     no_more_swaps = True
+    #     for j in range(0, n):
+    #         if Emissions[j] > Emissions[j+1]:
+    #             Temp = Emissions[j]
+    #             Emissions[j] = Emissions[j + 1]
+    #             Emissions[j + 1] = Temp 
+    #             no_more_swaps = False
+    #     n -= 1 
+    sorted_emissions = np.sort(Emissions) 
 
     sorted_sector_array = [' ' for i in range(len(Emissions))]
-    sorted_emissions = Emissions
     print("unsorted emissions are: " + str(unsorted_emissions))
     for emission_num in range(28):
         new_comaparable = unsorted_emissions[emission_num] 
-        print("new comparable = " + str( new_comaparable))
+        print("new comparable = " + str(new_comaparable))
         for i in range(28):
             if sorted_emissions[i] == new_comaparable:        
                 sorted_sector_array[i] = Sectors[emission_num]
@@ -292,9 +285,8 @@ def process():
                 sorted_x_end_array[i] = end_x_pixels[emission_num]
                 sorted_y_start_array[i] = start_y_pixels[emission_num]
                 sorted_y_end_array[i] = end_y_pixels[emission_num]
-                print("reached here")
                
-    print("Sorted emissiosn are: " + str(sorted_emissions))
+    print("Sorted emissions are: " + str(sorted_emissions))
     print("Sorted sectors are: " + str(sorted_sector_array))
 
     print("Sorted start x pixels are: " + str(sorted_x_start_array))
@@ -303,7 +295,7 @@ def process():
     print("Sorted end y pixels are: " + str(sorted_y_end_array))
 
     for i in range(len(Emissions)):
-        j = i
+        j = 27 - i
         data = data + '<tr><th>' + str(sorted_sector_array[j]) + ': '+ str(sorted_emissions[j]) + ' kg/hour </th></tr>\n'
         send_to_website(data)
 
@@ -401,7 +393,8 @@ def process():
 
                 x_limit_triangle += 3
                 x = 672
-            
+        
+                    
         for x in range(sorted_x_start_array[i], sorted_x_end_array[i]):
             for y in range(sorted_y_start_array[i], sorted_y_end_array[i]):
                 im.putpixel((x,y), (rgb_color))
@@ -415,10 +408,6 @@ def process():
     im.show()
     result = os.path.join(FILE_PATH, "result.png")
     im.save(result)
-    pie_chart(Emissions)
-
-
-
-
-
+    pie_chart(unsorted_emissions)
+   
 process()
